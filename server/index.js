@@ -10,9 +10,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
 
-
-hello there this is a change committed hahah
-
 /* middle ware package configuration */
 
 const __filename = fileURLToPath(import.meta.url); // grab file url while using modules
@@ -45,7 +42,8 @@ const upload = multer({ storage }); //anytime we "upload" itll store locally
 /* Mongoose Set up */
 
 const PORT = process.env.PORT || 6001;
-mongoose.connect(process.env.MONGO_URL, {
+mongoose
+  .connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -53,4 +51,3 @@ mongoose.connect(process.env.MONGO_URL, {
     app.listen(PORT, () => console.log(`server Port : ${PORT}`));
   })
   .catch((error) => console.log(`${error} did not connect`));
-
