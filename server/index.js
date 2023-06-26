@@ -9,8 +9,18 @@ import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
-import authRoutes from "./routes/auth/js";
+import authRoutes from './routes/auth.js';
 import { register } from './controllers/auth.js';
+import userRoutes from './routes/users.js';
+import postRoutes from './routes/posts.js';
+import { verifyToken } from './middleware/auth.js';
+import { createPost } from './controllers/posts.js';
+import User from './models/User.js';
+import Post from './models/Post.js';
+import { users, posts } from './data/index.js';
+
+// { } => importing a particular function present in a file which has multiple functions, createPost is the only function needed from posts, in index.js
+
 /* middle ware package configuration */
 
 const __filename = fileURLToPath(import.meta.url); // grab file url while using modules
@@ -42,14 +52,31 @@ const upload = multer({ storage }); //anytime we "upload" itll store locally
 
 /*routes with files */
 
-app.post("auth/register", upload.single("picture"), register);
+app.post('/auth/register', upload.single('picture'), register);
+app.post('/posts', verifyToken, upload.single('picture'), createPost);
+
+// sets property and graps from front end and uploads
+
 //upload picture locally upload done before it hits register endpoint
 
 //this route put here due to the upload hence cannot be moved to routes folder
 
 /*route */
+app.use('/auth', authRoutes); //prefix
 
-app.use("/auth", authRoutes); //prefix 
+/*user routes */
+// grab individual user
+
+//grab any user via id
+
+//get user friends
+
+//add remove friends
+
+app.use('/users', userRoutes);
+
+/* post routes */
+app.use('/posts', postRoutes);
 
 /* Mongoose Set up */
 
@@ -61,6 +88,9 @@ mongoose
   })
   .then(() => {
     app.listen(PORT, () => console.log(`server Port : ${PORT}`));
+
+    /*Add data once */
+    // User.insertMany(users);
+    // Post.insertMany(posts); 
   })
   .catch((error) => console.log(`${error} did not connect`));
-
