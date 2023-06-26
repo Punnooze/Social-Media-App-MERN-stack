@@ -1,5 +1,5 @@
 import express from 'express';
-import BodyParser from 'body-parser';
+
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -9,7 +9,8 @@ import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
-
+import authRoutes from "./routes/auth/js";
+import { register } from './controllers/auth.js';
 /* middle ware package configuration */
 
 const __filename = fileURLToPath(import.meta.url); // grab file url while using modules
@@ -39,6 +40,17 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage }); //anytime we "upload" itll store locally
 
+/*routes with files */
+
+app.post("auth/register", upload.single("picture"), register);
+//upload picture locally upload done before it hits register endpoint
+
+//this route put here due to the upload hence cannot be moved to routes folder
+
+/*route */
+
+app.use("/auth", authRoutes); //prefix 
+
 /* Mongoose Set up */
 
 const PORT = process.env.PORT || 6001;
@@ -51,3 +63,4 @@ mongoose
     app.listen(PORT, () => console.log(`server Port : ${PORT}`));
   })
   .catch((error) => console.log(`${error} did not connect`));
+
